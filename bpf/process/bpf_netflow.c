@@ -4,8 +4,7 @@
 #include "vmlinux.h"
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_core_read.h>
-#include "bpf_helpers.h"
-#include "bpf_tracing.h"
+#include <bpf/bpf_tracing.h>
 
 #define WINDOW_SIZE_NS		     1000000000ULL // 1 Second
 #define RATE_LIMIT_MAX		     50 // 50 connections per second, per CPU
@@ -13,12 +12,13 @@
 
 // Event Types for the Go Agent to decode
 enum event_type {
-	EVENT_NORMAL = 0,
-	EVENT_ATTACK_START = 1,
-	EVENT_SUMMARY = 2,
-	EVENT_SUMMARY = 3,
-	EVENT_EXFILTRATION = 4,
+    EVENT_NORMAL_CONNECT = 0,
+    EVENT_NORMAL_CLOSE = 1,
+    EVENT_ATTACK_START = 2,
+    EVENT_SUMMARY = 3,
+    EVENT_EXFILTRATION = 4, 
 };
+
 
 struct netflow_event {
 	__u64 cgroup_id; // 8 bytes
@@ -114,7 +114,7 @@ emit_normal: {
 	if (!e)
 		return 0;
 
-	e->type = EVENT_NORMAL;
+	e->type = EVENT_NORMAL_CONNECT;
 	e->cgroup_id = cgroup_id;
 	BPF_CORE_READ_INTO(&e->daddr, sk, __sk_common.skc_daddr);
 	BPF_CORE_READ_INTO(&e->dport, sk, __sk_common.skc_dport);
