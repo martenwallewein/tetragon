@@ -7,6 +7,7 @@ import (
 	"github.com/cilium/tetragon/pkg/config"
 	"github.com/cilium/tetragon/pkg/logger"
 	"github.com/cilium/tetragon/pkg/option"
+	"github.com/cilium/tetragon/pkg/sensors/netflow"
 	"github.com/cilium/tetragon/pkg/sensors/program"
 	"github.com/cilium/tetragon/pkg/strutils"
 )
@@ -19,6 +20,11 @@ func GetDefaultPrograms() []*program.Program {
 		ExecveBprmCommit,
 		ExecveMapUpdate,
 	}
+
+	if option.Config.EnableNetflowMetrics {
+		progs = append(progs, netflow.GetPrograms()...)
+	}
+
 	return progs
 }
 
@@ -51,6 +57,11 @@ func GetDefaultMaps() []*program.Map {
 		logger.GetLogger().Info("BPF ring buffer size (bytes)", "total", strutils.SizeWithSuffix(rbSize))
 		maps = append(maps, RingBufEvents)
 	}
+
+	if option.Config.EnableNetflowMetrics {
+		maps = append(maps, netflow.GetMaps()...)
+	}
+
 	return maps
 
 }

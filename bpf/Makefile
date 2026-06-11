@@ -33,7 +33,8 @@ PROCESS = bpf_loader.o \
 	  bpf_cgroup.o \
 	  bpf_enforcer.o bpf_multi_enforcer.o bpf_fmodret_enforcer.o \
 	  bpf_map_test_p1.o bpf_map_test_p2.o bpf_map_test_p3.o \
-	  bpf_prog_iter.o
+	  bpf_prog_iter.o  \
+	  bpf_netflow.o 
 
 # v3.10 RHEL7
 # base sensor
@@ -153,6 +154,7 @@ CFLAGS_bpf_enforcer.o           = -D__BPF_OVERRIDE_RETURN
 CFLAGS_bpf_multi_enforcer.o     = -D__BPF_OVERRIDE_RETURN -D__MULTI_KPROBE
 CFLAGS_bpf_generic_lsm_core.o   = -D__LARGE_BPF_PROG
 CFLAGS_bpf_generic_lsm_output.o = -D__LARGE_BPF_PROG
+CFLAGS_bpf_netflow.o            = -D__LARGE_BPF_PROG
 
 # Rules
 MTARGET_o  = $(patsubst $(DEPSDIR)%.d,$(OBJSDIR)%.o,$@)

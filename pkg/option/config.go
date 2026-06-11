@@ -156,6 +156,8 @@ type config struct {
 	// its ClientAuth policy to RequireAndVerifyClientCert; ServerTLSClientCAFiles
 	// must be non-empty.
 	ServerTLSRequireClientCert bool
+
+	EnableNetflowMetrics bool
 }
 
 var (
@@ -181,6 +183,8 @@ var (
 
 		// Set default value for {k,u}retprobes lru events cache
 		RetprobesCacheSize: defaults.DefaultRetprobesCacheSize,
+
+		EnableNetflowMetrics: defaults.DefaultEnableNetflow,
 	}
 )
 

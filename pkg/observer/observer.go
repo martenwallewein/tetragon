@@ -27,6 +27,7 @@ import (
 	"github.com/cilium/tetragon/pkg/reader/notify"
 	"github.com/cilium/tetragon/pkg/sensors"
 	"github.com/cilium/tetragon/pkg/sensors/config/confmap"
+	"github.com/cilium/tetragon/pkg/sensors/netflow"
 	"github.com/cilium/tetragon/pkg/strutils"
 )
 
@@ -203,6 +204,11 @@ func (k *Observer) StartReady(ctx context.Context, ready func()) error {
 	k.RingBufMapPath = filepath.Join(bpf.MapPrefixPath(), bpf.RingBufEventsMapName)
 
 	var err error
+	err = netflow.Load(ctx)
+	if err != nil {
+		return fmt.Errorf("tetragon, failed to run netflow handler: %w", err)
+	}
+
 	if err = k.RunEvents(ctx, ready); err != nil {
 		return fmt.Errorf("tetragon, aborting runtime error: %w", err)
 	}
