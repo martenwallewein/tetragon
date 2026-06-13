@@ -6,9 +6,12 @@
 #include <bpf/bpf_core_read.h>
 #include <bpf/bpf_tracing.h>
 
+#define AF_INET  2
+#define AF_INET6 10
+
 #define WINDOW_SIZE_NS		     1000000000ULL // 1 Second
-#define RATE_LIMIT_MAX		     50 // 50 connections per second, per CPU
-#define EXFILTRATION_THRESHOLD_BYTES (1024 * 1024 * 100) // 100 MB
+#define RATE_LIMIT_MAX		     5 // 5 connections per second, per CPU, for dummy purposes
+#define EXFILTRATION_THRESHOLD_BYTES (1024 * 1024 * 5) // 0 MB
 
 // Event Types for the Go Agent to decode
 enum event_type {
@@ -127,6 +130,20 @@ emit_normal: {
 SEC("kprobe/tcp_close")
 int BPF_PROG(tg_kp_tcp_close, struct sock *sk)
 {
+
+	__u16 family = 0;
+    BPF_CORE_READ_INTO(&family, sk, __sk_common.skc_family);
+    if (family != AF_INET && family != AF_INET6) {
+        return 0;
+    }
+
+    // TCP_ESTABLISHED = 1. Ignore listening sockets or failed handshakes.
+    //__u8 sk_state = 0;
+    //BPF_CORE_READ_INTO(&sk_state, sk, __sk_common.skc_state);
+    //if (sk_state != 1) {
+    //    return 0;
+    //}
+
 	__u64 cgroup_id = bpf_get_current_cgroup_id();
 
 	// 1. Check Rate Limit State (Synchronized with tcp_connect)
