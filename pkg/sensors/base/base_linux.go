@@ -22,6 +22,7 @@ func GetDefaultPrograms() []*program.Program {
 	}
 
 	if option.Config.EnableNetflowMetrics {
+		logger.GetLogger().Info("Enable flow metrics program")
 		progs = append(progs, netflow.GetPrograms()...)
 	}
 
@@ -59,6 +60,7 @@ func GetDefaultMaps() []*program.Map {
 	}
 
 	if option.Config.EnableNetflowMetrics {
+		logger.GetLogger().Info("Enable flow metrics map")
 		maps = append(maps, netflow.GetMaps()...)
 	}
 

@@ -151,6 +151,8 @@ const (
 	KeyServerTLSKeyFile           = "server-tls-key-file"
 	KeyServerTLSClientCAFiles     = "server-tls-client-ca-files"
 	KeyServerTLSRequireClientCert = "server-tls-require-client-cert"
+
+	KeyEnableNetFlow = "enable-netflow"
 )
 
 type UsernameMetadaCode int
@@ -331,6 +333,8 @@ func ReadAndSetFlags() error {
 	if err := validateServerTLSConfig(Config); err != nil {
 		return err
 	}
+
+	Config.EnableNetflowMetrics = viper.GetBool(KeyEnableNetFlow)
 
 	return nil
 }
@@ -588,4 +592,6 @@ func AddFlags(flags *pflag.FlagSet) {
 	flags.String(KeyServerTLSKeyFile, "", "Path to the PEM-encoded private key matching --"+KeyServerTLSCertFile+". Required when --"+KeyServerTLSCertFile+" is set.")
 	flags.StringSlice(KeyServerTLSClientCAFiles, []string{}, "Paths to PEM-encoded CA bundles used to verify client certificates. Required when --"+KeyServerTLSRequireClientCert+" is true.")
 	flags.Bool(KeyServerTLSRequireClientCert, false, "Require and verify client certificates (mTLS). Requires --"+KeyServerTLSClientCAFiles+".")
+
+	flags.Bool(KeyEnableNetFlow, false, "Enables netfow monitoring")
 }
